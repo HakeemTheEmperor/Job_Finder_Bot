@@ -11,7 +11,6 @@
 Before you begin, ensure you have the following installed:
 
 - [ASP.NET Core SDK](https://dotnet.microsoft.com/download)
-- [MongoDB](https://www.mongodb.com/try/download/community) _(or your preferred database)_
 - [Docker](https://www.docker.com/) _(optional for containerized deployment)_
 
 ### **Installation**
