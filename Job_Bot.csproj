@@ -242,6 +242,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ErrorResponse.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobFinderApiResponse.cs" />
     <Compile Include="Models\UserConfig.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -26,7 +27,6 @@ namespace Job_Bot
         {
             Env.Load();
             string token = Env.GetString("BOT_TOKEN");
-            Console.WriteLine(token);
             bot = new TelegramBotClient(token);
 
             var cts = new CancellationTokenSource();
@@ -37,7 +37,6 @@ namespace Job_Bot
             };
 
             bot.StartReceiving(HandleUpdateAsync, HandleErrorAsync, receiverOptions, cancellationToken);
-            Console.WriteLine("Bot is running. Press any key to exit...");
             Console.ReadKey();
 
             cts.Cancel();
@@ -79,7 +78,6 @@ namespace Job_Bot
         private static async Task<Task> HandleErrorAsync(ITelegramBotClient botClient, Exception exception,
             CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Error: {exception.Message}");
             return Task.CompletedTask;
         }
 
@@ -123,7 +121,7 @@ namespace Job_Bot
             else if (data == "exit")
             {
                 _userconfigurations.Remove(chatId);
-                await bot.SendMessage(chatId, "Thanks for using Job Finder");
+                await bot.SendMessage(chatId, "Thanks for using the DTC Job Finder");
             }
         }
 
@@ -265,9 +263,11 @@ namespace Job_Bot
                     var jsonObject = JsonConvert.DeserializeObject<JobFinderApiResponse>(responseContent);
                     responseContent = jsonObject?.Message ?? "User created successfully.";
                 }
-                else
+                else 
                 {
-                    responseContent = $"Error: {response.StatusCode} - {response.ReasonPhrase}";
+                    responseContent = await response.Content.ReadAsStringAsync();
+                    var errorObject = JsonConvert.DeserializeObject<ErrorResponse>(responseContent); // Ensure ErrorResponse matches the API's response structure
+                    responseContent = errorObject?.ErrorMessage ?? $"Error: {response.StatusCode} - {response.ReasonPhrase}";
                 }
             }
             catch (Exception e)
